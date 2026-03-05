@@ -1,4 +1,5 @@
 .venv/
 input_video.mp4
+clip_120_165.mp4
 __pycache__/
 *.pyc
