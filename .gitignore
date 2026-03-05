@@ -1,0 +1,4 @@
+.venv/
+input_video.mp4
+__pycache__/
+*.pyc
