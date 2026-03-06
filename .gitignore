@@ -1,6 +1,7 @@
-.venv/
 input_video.mp4
 clip_120_165.mp4
+.venv/
+seraphim-drone-detection-dataset/
 __pycache__/
 *.pyc
 *.mp4
