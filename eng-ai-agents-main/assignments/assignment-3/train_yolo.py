@@ -1,3 +1,8 @@
+# Handle system specific error.
+import os                                                                                                                                                                                   
+os.environ.pop("CUDA_VISIBLE_DEVICES", None)  # remove if set
+
+
 from ultralytics import YOLO
 
 import numpy as np
@@ -9,7 +14,9 @@ from ultralytics.utils import LOGGER
 from datetime import datetime
 
 import torch                                                                                                                                                                                
-                                                                                                                                                                                              
+
+
+# Set device.                                                                                                                                                                                    
 if torch.cuda.is_available():                                                                                                                                                               
     device = 0  
 else:                                                                                                                                                                                       
@@ -17,7 +24,6 @@ else:
     print("WARNING: No GPU detected, training on CPU. This will be very slow.")
 
 # This code from: https://docs.ultralytics.com/guides/custom-trainer/#logging-custom-metrics  -Daniel Ayer -03062026
-
 class MetricsTrainer(DetectionTrainer):
     """Custom trainer that computes and logs F1 score at the end of each epoch."""
 
@@ -47,19 +53,18 @@ class MetricsTrainer(DetectionTrainer):
 
         return metrics, fitness
 
-
 # Load a pretrained YOLO model (you can choose n, s, m, l, or x versions)
-model = YOLO("yolo26n.pt")
+model = YOLO("yolov8s.pt")
 
 # Store datasets.yaml uri.
-datasets = "/home/johnsmith/Desktop/njit/workspaces/ds681/eng-ai-agents-main/assignments/assignment-3/datasetts.yaml"
-
-# Set device.
+datasets = "/home/johnsmith/Desktop/njit/workspaces/ds681/eng-ai-agents-main/assignments/assignment-3/datasets.yaml"
 
 # Dynamically name each run.
 run_name = f"yolo-drone-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
 
-# Start training on your custom dataset
+# Fine tune the model on dataset.
+#   Run '.venv/bin/tensorboard --logdir runs/drone' in a terminal to watch the results.
+
 model.train(
     data = datasets, 
     epochs = 100, 
@@ -70,4 +75,6 @@ model.train(
     name = run_name,
     imgsz = 640,
     trainer=MetricsTrainer)
+
+
 

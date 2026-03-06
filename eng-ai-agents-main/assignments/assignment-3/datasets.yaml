@@ -1,6 +1,6 @@
 
 # Train/val/test sets as 1) dir: path/to/imgs, 2) file: path/to/imgs.txt, or 3) list: [path/to/imgs1, path/to/imgs2, ..]
-path: seraphim-drone-detection-dataset # dataset root dir (optional, can be relative to where you run training)
+path: /home/johnsmith/Desktop/njit/workspaces/ds681/eng-ai-agents-main/assignments/assignment-3/seraphim-drone-detection-dataset # dataset root dir (optional, can be relative to where you run training)
 train: train  # train images (relative to 'path' or absolute)
 val: val      # val images (relative to 'path' or absolute)
 test: test    # test images (optional)
