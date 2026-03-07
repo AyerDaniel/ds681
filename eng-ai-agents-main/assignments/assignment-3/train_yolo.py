@@ -72,6 +72,7 @@ model.train(
     device = device,
     optimizer = 'Adam',
     patience = 10,
+    project = "/home/johnsmith/Desktop/njit/workspaces/ds681/eng-ai-agents-main/assignments/assignment-3/runs",
     name = run_name,
     imgsz = 640,
     trainer=MetricsTrainer)
