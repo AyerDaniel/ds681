@@ -63,8 +63,6 @@ datasets = "/home/johnsmith/Desktop/njit/workspaces/ds681/eng-ai-agents-main/ass
 run_name = f"yolo-drone-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
 
 # Fine tune the model on dataset.
-#   Run '.venv/bin/tensorboard --logdir runs/drone' in a terminal to watch the results.
-
 model.train(
     data = datasets, 
     epochs = 100, 

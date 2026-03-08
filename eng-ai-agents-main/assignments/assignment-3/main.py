@@ -60,7 +60,7 @@ def store_detections_closure(model, frames_dir, detections_dir):
     return store_detections
 
 # Fucntion to parse the videos into frames.
-def parse_videos(vidoes_dir):
+def parse_videos(vidoes_dir, frames_dir):
     # This function parses the videos in the path into frames stored in subfolders labeled for the video.
 
     # Split each video in folder into frames.
@@ -93,7 +93,7 @@ def parse_videos(vidoes_dir):
 
         (
             ffmpeg
-            .input(f"{videos_dir}/{video}")
+            .input(f"{vidoes_dir}/{video}")
             .filter("fps", fps=5)
             .output(output_pattern)
             .run()
@@ -120,7 +120,7 @@ def task_1():
     os.makedirs(detections_dir, exist_ok=True)   
 
     # Parse videos.
-    # parse_videos(videos_dir)
+    # parse_videos(videos_dir, frames_dir)
 
 
     """ 
@@ -167,39 +167,68 @@ def task_2():
 
     # Set make_videos folder.
     make_videos_dir = "/home/johnsmith/Desktop/njit/workspaces/ds681/eng-ai-agents-main/assignments/assignment-3/make_videos"
-    os.makedirs(make_videos_dir, exist_ok=True)
 
+    # Make videos folder.
+    os.makedirs(make_videos_dir, exist_ok = True)
+
+    # The frames_dir contains a folder for each processed video.
     for video in os.listdir(frames_dir):
 
         # Initialize vars.
-        kf = None
-        trajectory = []
 
+        # Set kf to None for first pass detection.
+        kf = None
+
+        # Build list to track trajectories.
+        trajectory = []
+        
+        # Join path to the video in question.
         detection_dir_path = os.path.join(detections_dir, video)
+
+        # If the folder doesn't exist then no detections were made in the video; skip.
         if not os.path.exists(detection_dir_path):
             continue
 
+        # Get sorted list of all frames in video folder.
         all_frames = sorted(os.listdir(detection_dir_path))
 
+        # Iterate over frames.
         for frame in all_frames:
 
             # Run detector on detection frame.
             result = model(os.path.join(detection_dir_path, frame))[0]
+
+            # Create list of the x, y, width and height values.
             x, y, w, h = result.boxes.xywh[0].tolist()
 
             if kf is None:
                 # Initialize on first detection.
+
+                # Create Kalman Filter with four state variables [x, y, vx, vy] and two measurement variables [x,y].
                 kf = KalmanFilter(dim_x=4, dim_z=2)
+
+                # Initialize state.  Velocity is all zero assuming an at rest drone.
                 kf.x = np.array([x, y, 0., 0.])
+
+                # State transition matrix.
                 kf.F = np.array([[1, 0, 1, 0],
                                  [0, 1, 0, 1],
                                  [0, 0, 1, 0],
                                  [0, 0, 0, 1]], dtype=float)
+                
+                # Measurement Matrix
                 kf.H = np.array([[1, 0, 0, 0],
                                  [0, 1, 0, 0]], dtype=float)
+                
+                # Measuremment noise of 5 pixels.
                 kf.R = np.eye(2) * 5
+
+                # Process noise.
                 kf.Q = np.eye(4) * 0.1
+
+                # Initial state covariance.
                 kf.P = np.eye(4) * 1000
+
             else:
                 kf.predict()
                 kf.update(np.array([x, y]))
