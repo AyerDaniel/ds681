@@ -3,6 +3,7 @@ clip_120_165.mp4
 .venv/
 seraphim-drone-detection-dataset/
 __pycache__/
+venv/
 *.pyc
 *.mp4
 *.jpg
